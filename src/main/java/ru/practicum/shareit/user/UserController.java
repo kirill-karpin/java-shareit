@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -31,7 +32,7 @@ public class UserController {
   }
 
   @PostMapping
-  public User create(@RequestBody User user) {
+  public User create(@RequestBody @Valid User user) {
     return userService.create(user);
   }
 
