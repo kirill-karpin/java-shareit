@@ -1,12 +1,12 @@
 package ru.practicum.shareit.repository;
 
-import ru.practicum.shareit.storage.StoreManager;
+import ru.practicum.shareit.storage.Storage;
 
 public abstract class BaseCrudRepository<T> implements CrudRepository<T, Long> {
 
-  private final StoreManager<T> store;
+  private final Storage<T> store;
 
-  public BaseCrudRepository(StoreManager<T> store) {
+  public BaseCrudRepository(Storage<T> store) {
     this.store = store;
   }
 

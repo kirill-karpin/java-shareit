@@ -7,12 +7,12 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 
 @Component
-public class StoreManager<T> {
+public class Storage<T> {
 
   private final Map<Long, T> store = new HashMap<>();
 
-  private long counter = 1;
 
+  private long counter = 1;
 
   public long getNextId() {
     return counter++;
@@ -27,7 +27,6 @@ public class StoreManager<T> {
       if (entityId == null) {
         entityId = getNextId();
       }
-
       store.put(entityId, entity);
 
       setId.invoke(entity, entityId);
@@ -38,9 +37,8 @@ public class StoreManager<T> {
     return entity;
   }
 
-  public boolean deleteById(Long id) {
+  public void deleteById(Long id) {
     store.remove(id);
-    return true;
   }
 
   public T getById(Long id) {

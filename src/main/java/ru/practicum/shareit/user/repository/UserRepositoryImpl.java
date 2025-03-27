@@ -3,19 +3,19 @@ package ru.practicum.shareit.user.repository;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.repository.BaseCrudRepository;
-import ru.practicum.shareit.storage.StoreManager;
+import ru.practicum.shareit.storage.StorageManager;
 import ru.practicum.shareit.user.dto.UserDto;
 
 @Repository
 public class UserRepositoryImpl extends BaseCrudRepository<UserDto> implements UserRepository {
 
-  public UserRepositoryImpl(StoreManager<UserDto> store) {
-    super(store);
+  public UserRepositoryImpl() {
+    super(StorageManager.getStore(UserDto.class));
   }
 
   public UserDto findByEmail(String email) {
     for (UserDto user : findAll()) {
-      if (user.getEmail().equals(email)) {
+      if (user.getEmail() != null && user.getEmail().equals(email)) {
         return user;
       }
     }
