@@ -8,6 +8,7 @@ import ru.practicum.shareit.user.User;
  */
 @Data
 public class UpdateItemRequestDto {
+
   private Long id;
   private User requestor;
   private String description;

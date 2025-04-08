@@ -55,10 +55,8 @@ public class ItemServiceImpl implements ItemService {
     userRepository.findById(userId)
         .orElseThrow(() -> new NotFoundException("user not found"));
 
-    List<ItemDto> items = itemRepository.findByOwner_Id(userId).stream()
+    return itemRepository.findByOwner_Id(userId).stream()
         .map(ItemMapper::toItemDto).collect(Collectors.toList());
-
-    return items;
   }
 
   @Override
@@ -121,7 +119,6 @@ public class ItemServiceImpl implements ItemService {
 
     item.setOwner(user);
 
-
     return ItemMapper.toItemDto(createOrUpdate(item));
   }
 
@@ -143,7 +140,6 @@ public class ItemServiceImpl implements ItemService {
       throw new NotFoundException("item not found");
     }
 
-    var newItem = itemRepository.save(item);
-    return newItem;
+    return itemRepository.save(item);
   }
 }
