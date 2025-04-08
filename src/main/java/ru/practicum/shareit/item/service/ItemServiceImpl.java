@@ -3,7 +3,6 @@ package ru.practicum.shareit.item.service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.Item;
@@ -52,12 +51,14 @@ public class ItemServiceImpl implements ItemService {
   }
 
   @Override
-  public List<Item> getAllByUserId(Long userId) {
+  public List<ItemDto> getAllByUserId(Long userId) {
     userRepository.findById(userId)
         .orElseThrow(() -> new NotFoundException("user not found"));
 
-    return StreamSupport.stream(itemRepository.findAll().spliterator(), false)
-        .filter(i -> i.getOwner().getId().equals(userId)).collect(Collectors.toList());
+    List<ItemDto> items = itemRepository.findByOwner_Id(userId).stream()
+        .map(ItemMapper::toItemDto).collect(Collectors.toList());
+
+    return items;
   }
 
   @Override
@@ -98,14 +99,13 @@ public class ItemServiceImpl implements ItemService {
   }
 
   @Override
-  public List<Item> search(String searchString) {
+  public List<ItemDto> search(String searchString) {
     if (searchString.isEmpty()) {
       return List.of();
     }
 
-    return StreamSupport.stream(itemRepository.findAll().spliterator(), false).filter(
-            i -> i.getName().toLowerCase().contains(searchString.toLowerCase()) && i.getIsAvailable())
-        .collect(Collectors.toList());
+    return itemRepository.findAllByNameContainingIgnoreCase(searchString).stream()
+        .map(ItemMapper::toItemDto).collect(Collectors.toList());
   }
 
 
@@ -120,6 +120,7 @@ public class ItemServiceImpl implements ItemService {
     Item item = ItemMapper.toItem(itemDto);
 
     item.setOwner(user);
+
 
     return ItemMapper.toItemDto(createOrUpdate(item));
   }
@@ -142,6 +143,7 @@ public class ItemServiceImpl implements ItemService {
       throw new NotFoundException("item not found");
     }
 
-    return itemRepository.save(item);
+    var newItem = itemRepository.save(item);
+    return newItem;
   }
 }

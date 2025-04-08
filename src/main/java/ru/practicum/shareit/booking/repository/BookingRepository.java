@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.user.User;
 
 @Repository
@@ -23,4 +24,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
   List<Booking> findAllByBooker(@NotNull User booker);
 
   List<BookingDto> findAllByItem_Owner(@NotNull User itemOwner);
+
+  Booking findOneByItem_IdAndBooker_IdAndStatus(Long itemId, Long bookerId, BookingStatus status);
 }

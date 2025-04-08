@@ -2,6 +2,8 @@ package ru.practicum.shareit.booking.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -51,6 +53,7 @@ public class Booking {
   private User booker;
 
   @Column(name = "status", length = 512)
+  @Enumerated(EnumType.STRING)
   private BookingStatus status;
 
 }

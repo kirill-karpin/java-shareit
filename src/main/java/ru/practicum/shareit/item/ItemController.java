@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.shareit.comment.dto.CommentDto;
+import ru.practicum.shareit.comment.dto.CreateCommentDto;
+import ru.practicum.shareit.comment.service.CommentService;
 import ru.practicum.shareit.item.dto.CreateItemDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.UpdateItemDto;
@@ -25,9 +28,11 @@ public class ItemController {
 
   private static final String USER_ID_HEADER = "X-Sharer-User-Id";
   private final ItemService itemService;
+  private final CommentService commentService;
 
-  public ItemController(ItemService itemService) {
+  public ItemController(ItemService itemService, CommentService commentService) {
     this.itemService = itemService;
+    this.commentService = commentService;
   }
 
 
@@ -42,15 +47,12 @@ public class ItemController {
   public ItemDto getItemById(@RequestHeader(USER_ID_HEADER) Long userId,
       @PathVariable Long itemId) {
 
-    return null;
-    //return itemService.getItemByIdAndOwnerId(itemId, userId);
+    return itemService.getItemByIdAndOwnerId(itemId, userId);
   }
 
   @GetMapping
   public List<ItemDto> getItemsById(@RequestHeader(USER_ID_HEADER) Long userId) {
-
-    return null;
-    //return itemService.getAllByUserId(userId);
+    return itemService.getAllByUserId(userId);
   }
 
   @PatchMapping("/{itemId}")
@@ -62,8 +64,14 @@ public class ItemController {
 
   @GetMapping("/search")
   public List<ItemDto> searchItems(@RequestParam("text") String searchString) {
-    return null;
-    //return itemService.search(searchString);
+    return itemService.search(searchString);
+
   }
 
+  @PostMapping("/{itemId}/comment")
+  public CommentDto addComment(@RequestHeader(USER_ID_HEADER) Long userId,
+      @PathVariable Long itemId,
+      @RequestBody @Valid CreateCommentDto commentDto) {
+    return commentService.commentBookingPast(userId, itemId, commentDto);
+  }
 }

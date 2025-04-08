@@ -60,9 +60,11 @@ public class BookingServiceImpl implements BookingService {
         .orElseThrow(() -> new NotFoundException("Booking not found"));
     if (approved) {
       booking.setStatus(BookingStatus.APPROVED);
+    } else {
+      booking.setStatus(BookingStatus.REJECTED);
     }
 
-    return BookingMapper.toBookingDto(booking);
+    return BookingMapper.toBookingDto(bookingRepository.save(booking));
   }
 
   @Override
