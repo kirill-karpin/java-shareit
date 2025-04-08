@@ -1,8 +1,10 @@
 package ru.practicum.shareit.item.repository;
 
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.item.Item;
 
-public interface ItemRepository extends CrudRepository<Item, Long> {
+@Repository
+public interface ItemRepository extends JpaRepository<Item, Long> {
 
 }
