@@ -21,11 +21,6 @@ public class BookingMapper {
         .build();
   }
 
-  public static Booking toBooking(BookingDto bookingDto) {
-    return Booking.builder().
-        id(bookingDto.getId()).build();
-  }
-
   public static Booking toBooking(CreateBookingDto bookingDto) {
     return Booking.builder()
         .startDate(bookingDto.getStart().toInstant(ZoneOffset.ofHours(0)))
