@@ -1,7 +1,7 @@
 package ru.practicum.shareit.booking.service;
 
+import java.util.List;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.CreateBookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
@@ -49,5 +49,51 @@ public class BookingServiceImpl implements BookingService {
     Booking saveBooking = bookingRepository.save(createdBooking);
 
     return BookingMapper.toBookingDto(saveBooking);
+  }
+
+  @Override
+  public BookingDto approve(Long userId, Long bookingId, Boolean approved) {
+    userRepository.findById(userId)
+        .orElseThrow(() -> new RuntimeException("User not found"));
+
+    Booking booking = bookingRepository.findById(bookingId)
+        .orElseThrow(() -> new NotFoundException("Booking not found"));
+    if (approved) {
+      booking.setStatus(BookingStatus.APPROVED);
+    }
+
+    return BookingMapper.toBookingDto(booking);
+  }
+
+  @Override
+  public BookingDto getById(Long bookingId) {
+    return BookingMapper.toBookingDto(bookingRepository.findById(bookingId)
+        .orElseThrow(() -> new NotFoundException("Booking not found")));
+  }
+
+  @Override
+  public BookingDto getByOwnerIdOrBookerId(Long id, Long userId) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new NotFoundException("User not found"));
+
+    return BookingMapper.toBookingDto(bookingRepository.findOneByBookerOrItemOwner(id, user));
+  }
+
+  @Override
+  public List<BookingDto> getBookingByBookerId(Long userId) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new NotFoundException("User not found"));
+
+    return bookingRepository.findAllByBooker(user).stream()
+        .map(BookingMapper::toBookingDto).toList();
+  }
+
+  @Override
+  public List<BookingDto> getBookingByOwnerId(Long userId) {
+
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new NotFoundException("User not found"));
+
+    return bookingRepository.findAllByItem_Owner(user);
   }
 }
