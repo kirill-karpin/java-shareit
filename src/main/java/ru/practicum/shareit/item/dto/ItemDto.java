@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.comment.dto.CommentDto;
 
 @Data
@@ -19,4 +20,6 @@ public class ItemDto {
   private String description;
   private Boolean available;
   private List<CommentDto> comments = new LinkedList<>();
+  private BookingDto nextBooking;
+  private BookingDto lastBooking;
 }
