@@ -102,7 +102,8 @@ public class ItemServiceImpl implements ItemService {
       return List.of();
     }
 
-    return itemRepository.findAllByNameContainingIgnoreCase(searchString).stream()
+    return itemRepository.findAllByNameContainingIgnoreCaseAndIsAvailable(searchString, true)
+        .stream()
         .map(ItemMapper::toItemDto).collect(Collectors.toList());
   }
 

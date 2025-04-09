@@ -60,8 +60,13 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserDto update(UpdateUserDto updateUserDto) {
-    User user = UserMapper.toUser(updateUserDto);
+  public UserDto update(Long userId, UpdateUserDto updateUserDto) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(
+            () -> new NotFoundException(String.format("User with id %d not found", userId)));
+
+    UserMapper.merge(updateUserDto, user);
+
     return UserMapper.toUserDto(saveOrUpdate(user));
   }
 }
