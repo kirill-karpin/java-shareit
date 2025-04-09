@@ -1,4 +1,4 @@
-package ru.practicum.shareit.comment.dto;
+package ru.practicum.shareit.item.dto;
 
 import jakarta.validation.constraints.Past;
 import java.time.LocalDateTime;

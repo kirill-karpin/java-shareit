@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.mapper;
 
 import java.util.LinkedHashSet;
-import ru.practicum.shareit.comment.mapper.CommentMapper;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.dto.CreateItemDto;
 import ru.practicum.shareit.item.dto.ItemDto;
