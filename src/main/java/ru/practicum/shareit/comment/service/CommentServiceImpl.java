@@ -2,7 +2,6 @@ package ru.practicum.shareit.comment.service;
 
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.comment.Comment;
 import ru.practicum.shareit.comment.dto.CommentDto;
@@ -12,7 +11,6 @@ import ru.practicum.shareit.comment.repository.CommentRepository;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -25,7 +23,7 @@ public class CommentServiceImpl implements CommentService {
   private final BookingRepository bookingRepository;
 
   public CommentServiceImpl(CommentRepository commentRepository, UserRepository userRepository,
-      ItemService itemService, ItemRepository itemRepository, BookingRepository bookingRepository) {
+      ItemRepository itemRepository, BookingRepository bookingRepository) {
     this.commentRepository = commentRepository;
     this.userRepository = userRepository;
     this.itemRepository = itemRepository;
@@ -40,8 +38,8 @@ public class CommentServiceImpl implements CommentService {
     Item item = itemRepository.findById(itemId)
         .orElseThrow(() -> new NotFoundException("item not found"));
 
-    Booking booking = bookingRepository.findOneByItem_IdAndBooker_IdAndStatus(
-        itemId, userId, BookingStatus.APPROVED);
+    Booking booking = bookingRepository.checkBookingIsExpired(
+        userId, itemId);
 
     if (booking == null) {
       throw new RuntimeException("booking not found");

@@ -1,16 +1,17 @@
 package ru.practicum.shareit.comment.service;
 
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.List;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.CreateBookingDto;
 import ru.practicum.shareit.booking.service.BookingServiceImpl;
-import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.comment.dto.CreateCommentDto;
 import ru.practicum.shareit.item.dto.CreateItemDto;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -35,6 +36,9 @@ class CommentServiceImplTest {
   @Autowired
   private ItemService itemService;
 
+  @Autowired
+  private BookingServiceImpl bookingService;
+
   @Test
   void commentBookingPast() {
 
@@ -57,13 +61,56 @@ class CommentServiceImplTest {
 
     ItemDto itemDto1 = itemService.createItemWithOwnerId(itemDto, userDto1.getId());
 
-    CommentDto result = commentService.commentBookingPast(userDto1.getId(), itemDto1.getId(),
-        commentDto);
+    assertThrows(RuntimeException.class,
+        () -> commentService.commentBookingPast(userDto1.getId(), itemDto1.getId(),
+            commentDto));
 
-    assertNotNull(result);
+    CreateBookingDto bookingDto = CreateBookingDto.builder()
+        .itemId(itemDto1.getId())
+        .start(LocalDateTime.now().minusDays(5))
+        .end(LocalDateTime.now().minusDays(4))
+        .build();
 
-    List<ItemDto> items = itemService.getAllByUserId(userDto1.getId());
+    BookingDto bookingDto1 = bookingService.create(userDto1.getId(), bookingDto);
+    bookingService.approve(userDto1.getId(), bookingDto1.getId(), true);
 
-    assertTrue(items.size() == 1);
+    assertDoesNotThrow(() -> {
+      commentService.commentBookingPast(userDto1.getId(), itemDto1.getId(), commentDto);
+    });
+  }
+
+  @Test
+  void commentBookingFutureThrowException() {
+
+    CreateCommentDto commentDto = CreateCommentDto.builder()
+        .text("text")
+        .build();
+
+    CreateUserDto userDto = CreateUserDto.builder()
+        .name("userName")
+        .email("email")
+        .build();
+
+    CreateItemDto itemDto = CreateItemDto.builder()
+        .name("itemName")
+        .description("itemDescription")
+        .available(true)
+        .build();
+
+    UserDto userDto1 = userService.create(userDto);
+
+    ItemDto itemDto1 = itemService.createItemWithOwnerId(itemDto, userDto1.getId());
+
+    CreateBookingDto bookingDto = CreateBookingDto.builder()
+        .itemId(itemDto1.getId())
+        .start(LocalDateTime.now().minusDays(5))
+        .end(LocalDateTime.now().plusDays(4))
+        .build();
+
+    BookingDto bookingDto1 = bookingService.create(userDto1.getId(), bookingDto);
+    bookingService.approve(userDto1.getId(), bookingDto1.getId(), true);
+
+    assertThrows(RuntimeException.class,
+        () -> commentService.commentBookingPast(userDto1.getId(), itemDto1.getId(), commentDto));
   }
 }
