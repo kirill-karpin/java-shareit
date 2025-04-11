@@ -9,8 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.user.dto.CreateUserDto;
 import ru.practicum.shareit.user.dto.UpdateUserDto;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
 /**
@@ -27,31 +28,19 @@ public class UserController {
   }
 
   @GetMapping("/{userId}")
-  public User get(@PathVariable Long userId) {
+  public UserDto get(@PathVariable Long userId) {
     return userService.getById(userId);
   }
 
   @PostMapping
-  public User create(@RequestBody @Valid User user) {
+  public UserDto create(@RequestBody @Valid CreateUserDto user) {
     return userService.create(user);
   }
 
   @PatchMapping("/{userId}")
-  public User update(@PathVariable Long userId, @RequestBody UpdateUserDto userUpdateDto) {
-    User user = userService.getById(userId);
+  public UserDto update(@PathVariable Long userId, @RequestBody UpdateUserDto userUpdateDto) {
 
-    if (user == null) {
-      throw new NotFoundException("Пользователь с id " + userId + " не найден");
-    }
-
-    if (userUpdateDto.getName() != null) {
-      user.setName(userUpdateDto.getName());
-    }
-    if (userUpdateDto.getEmail() != null) {
-      user.setEmail(userUpdateDto.getEmail());
-    }
-
-    return userService.update(user);
+    return userService.update(userId, userUpdateDto);
   }
 
   @DeleteMapping("/{userId}")

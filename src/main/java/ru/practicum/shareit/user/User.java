@@ -1,24 +1,41 @@
 package ru.practicum.shareit.user;
 
-import jakarta.validation.constraints.Email;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.Setter;
 
-/**
- * TODO Sprint add-controllers.
- */
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
+@Entity
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "users")
 public class User {
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Size(max = 255)
+  @NotNull
+  @Column(name = "name", nullable = false)
   private String name;
 
-  @NonNull
-  @Email(message = "Некорректный email")
+
+  @Size(max = 512)
+  @NotNull
+  @Column(name = "email", nullable = false, length = 512)
   private String email;
+
 }

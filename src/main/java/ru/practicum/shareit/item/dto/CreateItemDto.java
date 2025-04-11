@@ -1,24 +1,27 @@
 package ru.practicum.shareit.item.dto;
 
-import java.util.LinkedList;
-import java.util.List;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.booking.dto.BookingDto;
 
+/**
+ * TODO Sprint add-controllers.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ItemDto {
+public class CreateItemDto {
 
-  private Long id;
+  @NotNull
+  @NotEmpty
   private String name;
+  @NotNull
+  @NotEmpty
   private String description;
+  @NotNull
   private Boolean available;
-  private List<CommentDto> comments = new LinkedList<>();
-  private BookingDto nextBooking;
-  private BookingDto lastBooking;
 }
