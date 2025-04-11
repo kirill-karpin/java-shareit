@@ -56,7 +56,7 @@ public class Item {
   @OneToMany(mappedBy = "item")
   private Set<Booking> bookings = new LinkedHashSet<>();
 
-  @OneToMany(mappedBy = "item")
+  @OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
   private Set<Comment> comments = new LinkedHashSet<>();
 
 

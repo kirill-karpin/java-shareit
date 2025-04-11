@@ -55,7 +55,7 @@ public class ItemServiceImpl implements ItemService {
     userRepository.findById(userId)
         .orElseThrow(() -> new NotFoundException("user not found"));
 
-    return itemRepository.findByOwner_Id(userId).stream()
+    return itemRepository.findByOwnerIdWithComments(userId).stream()
         .map(ItemMapper::toItemDto).collect(Collectors.toList());
   }
 
