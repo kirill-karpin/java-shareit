@@ -49,14 +49,14 @@ public class Item {
   private Boolean isAvailable;
 
   @NotNull
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @ManyToOne(fetch = FetchType.EAGER, optional = false)
   @JoinColumn(name = "owner_id", nullable = false)
   private User owner;
 
   @OneToMany(mappedBy = "item")
   private Set<Booking> bookings = new LinkedHashSet<>();
 
-  @OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "item", fetch = FetchType.EAGER)
   private Set<Comment> comments = new LinkedHashSet<>();
 
 
