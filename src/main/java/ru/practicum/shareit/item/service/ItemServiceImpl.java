@@ -1,121 +1,146 @@
 package ru.practicum.shareit.item.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.item.dto.CreateItemDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.UpdateItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 @Service
 public class ItemServiceImpl implements ItemService {
 
   private final ItemRepository itemRepository;
 
-  private final UserService userService;
+  private final UserRepository userRepository;
 
-  public ItemServiceImpl(ItemRepository itemRepository, UserService userService) {
+  public ItemServiceImpl(ItemRepository itemRepository, UserRepository userService) {
     this.itemRepository = itemRepository;
-    this.userService = userService;
+    this.userRepository = userService;
   }
 
   @Override
-  public Item create(Item item) {
-    return itemRepository.save(item);
+  public ItemDto create(Long userId, CreateItemDto createItemDto) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new NotFoundException("user not found"));
+    Item item = ItemMapper.toItem(createItemDto);
+    item.setOwner(user);
+    return ItemMapper.toItemDto(createOrUpdate(item));
   }
 
   @Override
-  public Item getById(Long id) {
-    return itemRepository.findById(id);
-  }
-
-  @Override
-  public List<Item> getAllByUserId(Long userId) {
-    User user = userService.getById(userId);
-
-    if (user == null) {
-      throw new NotFoundException("user not found");
+  public ItemDto getById(Long id) {
+    if (id == null) {
+      throw new NotFoundException("item id is null");
     }
 
-    return StreamSupport.stream(itemRepository.findAll().spliterator(), false)
-        .filter(i -> i.getOwnerId().equals(userId)).collect(Collectors.toList());
+    if (id <= 0) {
+      throw new NotFoundException("item id is negative");
+    }
+
+    return ItemMapper.toItemDto(
+        itemRepository.findById(id).orElseThrow(() -> new NotFoundException("item not found")));
+
   }
 
   @Override
-  public Item update(Item item) {
-    return itemRepository.save(item);
+  public List<ItemDto> getAllByUserId(Long userId) {
+    userRepository.findById(userId)
+        .orElseThrow(() -> new NotFoundException("user not found"));
+
+    return itemRepository.findAllByOwner_Id(userId).stream()
+        .map(ItemMapper::toItemDto).collect(Collectors.toList());
+  }
+
+  @Override
+  public ItemDto update(UpdateItemDto updateItemDto) {
+    return ItemMapper.toItemDto(createOrUpdate(ItemMapper.toItem(updateItemDto)));
   }
 
   public ItemDto updateItemByIdWithOwnerId(Long userId, Long itemId, UpdateItemDto updateItemDto) {
 
-    User user = userService.getById(userId);
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new NotFoundException("user not found"));
 
     if (user == null) {
       throw new NotFoundException("user not found");
     }
 
-    Item item = getById(itemId);
-    if (item == null) {
+    Optional<Item> item = itemRepository.findById(itemId);
+
+    if (item.isEmpty()) {
       throw new NotFoundException("item not found");
     }
 
-    if (!item.getOwnerId().equals(userId)) {
+    if (!item.get().getOwner().getId().equals(userId)) {
       throw new NotFoundException("user not owner of this item");
     }
 
     if (updateItemDto.getAvailable() != null) {
-      item.setAvailable(updateItemDto.getAvailable());
+      item.get().setIsAvailable(updateItemDto.getAvailable());
     }
     if (updateItemDto.getDescription() != null) {
-      item.setDescription(updateItemDto.getDescription());
+      item.get().setDescription(updateItemDto.getDescription());
     }
     if (updateItemDto.getName() != null) {
-      item.setName(updateItemDto.getName());
+      item.get().setName(updateItemDto.getName());
     }
 
-    return ItemMapper.toItemDto(update(item));
+    return ItemMapper.toItemDto(createOrUpdate(item.orElse(null)));
   }
 
   @Override
-  public List<Item> search(String searchString) {
+  public List<ItemDto> search(String searchString) {
     if (searchString.isEmpty()) {
       return List.of();
     }
 
-    return StreamSupport.stream(itemRepository.findAll().spliterator(), false).filter(
-            i -> i.getName().toLowerCase().contains(searchString.toLowerCase()) && i.getAvailable())
-        .collect(Collectors.toList());
+    return itemRepository.findAllByNameContainingIgnoreCaseAndIsAvailable(searchString, true)
+        .stream()
+        .map(ItemMapper::toItemDto).collect(Collectors.toList());
   }
 
 
   @Override
-  public ItemDto createItemWithOwnerId(ItemDto itemDto, Long userId) {
-    User user = userService.getById(userId);
+  public ItemDto createItemWithOwnerId(CreateItemDto itemDto, Long userId) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new NotFoundException("user not found"));
 
     if (user == null) {
       throw new NotFoundException("user not found");
     }
     Item item = ItemMapper.toItem(itemDto);
 
-    item.setOwnerId(userId);
+    item.setOwner(user);
 
-    return ItemMapper.toItemDto(create(item));
+    return ItemMapper.toItemDto(createOrUpdate(item));
   }
 
   @Override
-  public Item getItemByIdAndOwnerId(Long itemId, Long userId) {
-    User user = userService.getById(userId);
+  public ItemDto getItemByIdAndOwnerId(Long itemId, Long userId) {
+    userRepository.findById(userId)
+        .orElseThrow(() -> new NotFoundException("user not found"));
 
-    if (user == null) {
-      throw new NotFoundException("user not found");
+    return ItemMapper.toItemDto(
+        itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("item not found")));
+  }
+
+  private Item createOrUpdate(Item item) {
+    if (item.getId() == null) {
+      return itemRepository.save(item);
+    }
+    Optional<Item> existingItem = itemRepository.findById(item.getId());
+    if (existingItem.isEmpty()) {
+      throw new NotFoundException("item not found");
     }
 
-    return getById(itemId);
+    return itemRepository.save(item);
   }
 }

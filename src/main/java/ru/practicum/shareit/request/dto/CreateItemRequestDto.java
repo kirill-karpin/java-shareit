@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import ru.practicum.shareit.user.User;
 
 /**
@@ -11,11 +12,12 @@ import ru.practicum.shareit.user.User;
  */
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class ItemRequestDto {
+@NoArgsConstructor
+public class CreateItemRequestDto {
 
-  private Long id;
+  @NonNull
   private User requestor;
+  @NonNull
   private String description;
 }

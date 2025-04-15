@@ -1,18 +1,18 @@
-package ru.practicum.shareit.request;
+package ru.practicum.shareit.booking.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,32 +21,38 @@ import lombok.Setter;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.user.User;
 
-/**
- * TODO Sprint add-item-requests.
- */
 @Getter
 @Setter
 @Entity
+@Table(name = "bookings")
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "requests")
-public class ItemRequest {
+@AllArgsConstructor
+public class Booking {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", nullable = false)
   private Long id;
 
-  @Column(name = "description", length = Integer.MAX_VALUE)
-  private String description;
+  @Column(name = "start_date")
+  private Instant startDate;
+
+  @Column(name = "end_date")
+  private Instant endDate;
 
   @NotNull
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "requestor_id", nullable = false)
-  private User requestor;
+  @JoinColumn(name = "item_id", nullable = false)
+  private Item item;
 
-  @OneToMany
-  private Set<Item> items = new LinkedHashSet<>();
+  @NotNull
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "booker_id", nullable = false)
+  private User booker;
+
+  @Column(name = "status", length = 512)
+  @Enumerated(EnumType.STRING)
+  private BookingStatus status;
 
 }
