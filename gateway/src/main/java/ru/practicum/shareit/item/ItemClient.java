@@ -49,4 +49,8 @@ public class ItemClient extends BaseClient {
   public ResponseEntity<Object> search(String searchString) {
     return null;
   }
+
+  public ResponseEntity<Object> getAllByUserId(Long userId) {
+    return null;
+  }
 }

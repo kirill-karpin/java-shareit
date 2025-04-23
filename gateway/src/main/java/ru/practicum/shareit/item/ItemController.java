@@ -48,7 +48,7 @@ public class ItemController {
 
   @GetMapping
   public ResponseEntity<Object> getItemsById(@RequestHeader(USER_ID_HEADER) Long userId) {
-    return itemService.getAllByUserId(userId);
+    return itemClient.getAllByUserId(userId);
   }
 
   @PatchMapping("/{itemId}")

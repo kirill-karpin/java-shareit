@@ -1,20 +1,22 @@
-package ru.practicum.shareit.request;
+package ru.practicum.shareit.user;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareit.client.BaseClient;
-import ru.practicum.shareit.request.dto.CreateItemRequestDto;
+import ru.practicum.shareit.user.dto.CreateUserDto;
+import ru.practicum.shareit.user.dto.UpdateUserDto;
+import ru.practicum.shareit.user.dto.UserDto;
 
 @Service
-public class ItemRequestClient extends BaseClient {
+public class UserClient extends BaseClient {
 
   private static final String API_PREFIX = "/items";
 
-  public ItemRequestClient(@Value("${shareit-server.url}") String serverUrl,
+  public UserClient(@Value("${shareit-server.url}") String serverUrl,
       RestTemplateBuilder builder) {
     super(
         builder
@@ -24,15 +26,19 @@ public class ItemRequestClient extends BaseClient {
     );
   }
 
-  public ResponseEntity<?> createRequest(Long userId, CreateItemRequestDto createItemRequestDto) {
+  public UserDto getById(Long userId) {
     return null;
   }
 
-  public ResponseEntity<?> getUserItemRequests(Long userId) {
+  public UserDto create(@Valid CreateUserDto user) {
     return null;
   }
 
-  public ResponseEntity<?> getById(Long userId, Long requestId) {
+  public UserDto update(Long userId, UpdateUserDto userUpdateDto) {
     return null;
+  }
+
+  public void delete(Long userId) {
+
   }
 }

@@ -1,7 +1,7 @@
 package ru.practicum.shareit.request.dto;
 
 import lombok.Data;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.dto.UserDto;
 
 /**
  * TODO Sprint add-item-requests.
@@ -10,6 +10,6 @@ import ru.practicum.shareit.user.User;
 public class UpdateItemRequestDto {
 
   private Long id;
-  private User requestor;
+  private UserDto requestor;
   private String description;
 }

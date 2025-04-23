@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import ru.practicum.shareit.user.User;
 
 /**
  * TODO Sprint add-item-requests.
@@ -17,7 +16,8 @@ import ru.practicum.shareit.user.User;
 public class CreateItemRequestDto {
 
   @NonNull
-  private User requestor;
+  private Long requestorId;
+
   @NonNull
   private String description;
 }

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.dto.UserDto;
 
 /**
  * TODO Sprint add-item-requests.
@@ -16,6 +16,6 @@ import ru.practicum.shareit.user.User;
 public class ItemRequestDto {
 
   private Long id;
-  private User requestor;
+  private UserDto requestor;
   private String description;
 }
