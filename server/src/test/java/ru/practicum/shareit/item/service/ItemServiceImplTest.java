@@ -87,24 +87,4 @@ class ItemServiceImplTest {
     assertFalse(itemsDb.isEmpty());
 
   }
-
-  @Test
-  void update() {
-  }
-
-  @Test
-  void updateItemByIdWithOwnerId() {
-  }
-
-  @Test
-  void search() {
-  }
-
-  @Test
-  void createItemWithOwnerId() {
-  }
-
-  @Test
-  void getItemByIdAndOwnerId() {
-  }
 }

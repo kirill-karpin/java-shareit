@@ -92,9 +92,4 @@ class ItemControllerTest {
 
   }
 
-  @SneakyThrows
-  @Test
-  void createOnRequestWithoutDescription() {
-
-  }
 }
