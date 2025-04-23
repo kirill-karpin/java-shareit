@@ -58,7 +58,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
       throw new NotFoundException("ItemRequest not found");
     }
     ItemRequest itemRequest = itemRequestRepository.findById(
-        userId).orElseThrow(() -> new NotFoundException("ItemRequest with id " + userId + " not found"));
+            userId)
+        .orElseThrow(() -> new NotFoundException("ItemRequest with id " + userId + " not found"));
 
     Mapper.merge(itemRequest, updateItemRequestDto);
 

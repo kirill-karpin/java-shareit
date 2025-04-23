@@ -88,7 +88,6 @@ class ItemRequestServiceTest {
   }
 
 
-
   @Test
   void getById() {
 
@@ -98,7 +97,6 @@ class ItemRequestServiceTest {
         .description("test").build();
 
     var result = itemRequestService.create(user1.getId(), createDto);
-
 
     assertNotNull(result);
 
