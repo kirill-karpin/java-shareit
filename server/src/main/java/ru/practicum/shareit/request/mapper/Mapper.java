@@ -1,5 +1,8 @@
 package ru.practicum.shareit.request.mapper;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.request.dto.CreateItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -10,7 +13,7 @@ public class Mapper {
   public static ItemRequest toItemRequest(CreateItemRequestDto createItemRequestDto) {
     return ItemRequest.builder()
         .description(createItemRequestDto.getDescription())
-        .requestor(createItemRequestDto.getRequestor())
+        .created(Instant.now())
         .build();
 
   }
@@ -20,15 +23,13 @@ public class Mapper {
         .id(itemRequest.getId())
         .description(itemRequest.getDescription())
         .requestor(itemRequest.getRequestor())
+        .created(LocalDateTime.ofInstant(itemRequest.getCreated(), ZoneOffset.ofHours(0)))
         .build();
   }
 
   public static void merge(ItemRequest itemRequest, UpdateItemRequestDto updateItemRequestDto) {
     if (updateItemRequestDto.getDescription() != null) {
       itemRequest.setDescription(updateItemRequestDto.getDescription());
-    }
-    if (updateItemRequestDto.getRequestor().getId() != null) {
-      itemRequest.setRequestor(updateItemRequestDto.getRequestor());
     }
   }
 }

@@ -1,11 +1,11 @@
 package ru.practicum.shareit.request.dto;
 
-import jakarta.validation.constraints.NotEmpty;
-import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import ru.practicum.shareit.user.User;
 
 /**
  * TODO Sprint add-item-requests.
@@ -16,6 +16,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreateItemRequestDto {
 
-  @NotEmpty
+  @NonNull
+  private User requestor;
+  @NonNull
   private String description;
 }

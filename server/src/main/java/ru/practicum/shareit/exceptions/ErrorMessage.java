@@ -4,9 +4,9 @@ import java.util.Map;
 
 public class ErrorMessage {
 
-  public final Map<String, String> errors;
+  public final Map<String, String> error;
 
   public ErrorMessage(Map<String, String> errors) {
-    this.errors = errors;
+    this.error = errors;
   }
 }

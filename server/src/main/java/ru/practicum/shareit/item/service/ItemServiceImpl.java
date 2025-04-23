@@ -28,10 +28,13 @@ public class ItemServiceImpl implements ItemService {
 
   @Override
   public ItemDto create(Long userId, CreateItemDto createItemDto) {
+
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new NotFoundException("user not found"));
+
     Item item = ItemMapper.toItem(createItemDto);
     item.setOwner(user);
+
     return ItemMapper.toItemDto(createOrUpdate(item));
   }
 
