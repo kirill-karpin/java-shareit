@@ -58,10 +58,10 @@ class ItemRequestServiceTest {
     assertNotNull(result);
 
     result.setDescription("update");
-    var updateDto = UpdateItemRequestDto.builder().
-        description("update").build();
+    var updateDto = UpdateItemRequestDto.builder()
+        .description("update").build();
 
-    var resultUpdate = itemRequestService.update(user1.getId(), updateDto);
+    itemRequestService.update(user1.getId(), updateDto);
 
     var dbResult = itemRequestService.getById(user1.getId());
 
