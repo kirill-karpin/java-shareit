@@ -25,6 +25,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.ItemController;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CreateCommentDto;
@@ -177,6 +178,34 @@ class ItemControllerTest {
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id", is(itemDto.getId()), Long.class));
+
+    verify(itemService, times(1))
+        .updateItemByIdWithOwnerId(userId, itemId, updateItemDto);
+  }
+
+  @SneakyThrows
+  @Test
+  void updateItemWithInvalidUserId() {
+    Long userId = 1L;
+    Long itemId = 1L;
+
+    UpdateItemDto updateItemDto = UpdateItemDto.builder()
+        .id(1L)
+        .name("new-test")
+        .description("new-test")
+        .available(false)
+        .build();
+
+    when(itemService.updateItemByIdWithOwnerId(userId, itemId, updateItemDto))
+        .thenThrow(new NotFoundException("user not found"));
+
+    mvc.perform(patch("/items/{id}", itemId)
+            .header("X-Sharer-User-Id", userId)
+            .content(mapper.writeValueAsString(updateItemDto))
+            .characterEncoding(StandardCharsets.UTF_8)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNotFound());
 
     verify(itemService, times(1))
         .updateItemByIdWithOwnerId(userId, itemId, updateItemDto);

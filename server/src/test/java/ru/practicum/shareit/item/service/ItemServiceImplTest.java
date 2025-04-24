@@ -3,12 +3,14 @@ package ru.practicum.shareit.item.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.dto.CreateItemDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.User;
@@ -53,6 +55,9 @@ class ItemServiceImplTest {
 
   @Test
   void testGetById() {
+
+    assertThrows(NotFoundException.class, () -> itemService.getById(null));
+    assertThrows(NotFoundException.class, () -> itemService.getById(-1L));
   }
 
   @Test
