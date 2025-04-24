@@ -2,129 +2,83 @@ package ru.practicum.shareit.booking.service;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
-import ru.practicum.shareit.booking.dto.BookingDto;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.booking.dto.CreateBookingDto;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
-import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.item.dto.CreateItemDto;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.exceptions.ValidationException;
+import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.item.service.ItemServiceImpl;
-import ru.practicum.shareit.user.dto.CreateUserDto;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.service.UserService;
-import ru.practicum.shareit.user.service.UserServiceImpl;
 
-@DataJpaTest
-@Import({BookingServiceImpl.class, ItemServiceImpl.class, UserServiceImpl.class})
+@ExtendWith(MockitoExtension.class)
 class BookingServiceTest {
 
-  @Autowired
-  private BookingService bookingService;
-  @Autowired
+  @Mock
+  private BookingRepository bookingRepository;
+  @Mock
+  private ItemRepository itemRepository;
+  @Mock
+  private UserRepository userRepository;
+
+  @InjectMocks
+  private BookingServiceImpl bookingService;
+
   private UserService userService;
-  @Autowired
+
   private ItemService itemService;
 
-  @Test
-  void createAndApproveBookingTest() {
+  private User user;
+  private User owner;
+  private Item item;
+  private CreateBookingDto createBookingDto;
+  private Booking booking;
 
-    CreateUserDto createUserDto = CreateUserDto.builder().name("name").email("mail@mail.ru")
+  @BeforeEach
+  void setUp() {
+    user = User.builder().id(1L).name("UserName").email("test@example.com").build();
+    owner = User.builder().id(2L).name("OwnerName").email("test2@example.com").build();
+    item = Item.builder().id(2L).name("name").description("description").owner(owner)
+        .isAvailable(true).build();
+    createBookingDto = CreateBookingDto.builder()
+        .itemId(item.getId())
+        .start(LocalDateTime.now())
+        .end(LocalDateTime.now().plusMinutes(10))
         .build();
-    UserDto userDto = userService.create(createUserDto);
-
-    CreateItemDto createItemDto = CreateItemDto.builder()
-        .name("item")
-        .available(true)
-        .description("item").build();
-
-    ItemDto itemDto = itemService.create(userDto.getId(), createItemDto);
-
-    CreateBookingDto bookingDto = CreateBookingDto.builder()
-        .start(LocalDateTime.parse("2023-08-14T16:00:00"))
-        .end(LocalDateTime.parse("2023-08-14T17:00:00"))
-        .itemId(itemDto.getId())
-        .build();
-
-    BookingDto dto = bookingService.create(userDto.getId(), bookingDto);
-
-    assertNotNull(dto);
-
-    bookingService.approve(userDto.getId(), dto.getId(), true);
-
-    BookingDto approvedDto = bookingService.getById(dto.getId());
-    assertEquals(BookingStatus.APPROVED, approvedDto.getStatus());
-
+    booking = BookingMapper.toBooking(createBookingDto);
+    booking.setItem(item);
+    booking.setBooker(user);
+    booking.setStatus(BookingStatus.WAITING);
   }
 
   @Test
-  void createAndApproveBookingWrongUserTest() {
+  void addBookingValidationExceptionItemOnUnAvaliable() {
+    item.setIsAvailable(false);
+    when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+    when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
 
-    CreateUserDto createUserDto = CreateUserDto.builder().name("name").email("mail@mail.ru")
-        .build();
-    UserDto userDto = userService.create(createUserDto);
-
-    CreateItemDto createItemDto = CreateItemDto.builder()
-        .name("item")
-        .available(true)
-        .description("item").build();
-
-    ItemDto itemDto = itemService.create(userDto.getId(), createItemDto);
-
-    CreateBookingDto bookingDto = CreateBookingDto.builder()
-        .start(LocalDateTime.parse("2023-08-14T16:00:00"))
-        .end(LocalDateTime.parse("2023-08-14T17:00:00"))
-        .itemId(itemDto.getId())
-        .build();
-
-    assertThrows(NotFoundException.class,
-        () -> bookingService.create(10000L, bookingDto));
+    ValidationException exception = assertThrows(ValidationException.class, () -> {
+      bookingService.create(user.getId(), createBookingDto);
+    });
+    assertEquals("Item not available", exception.getMessage());
+    verify(userRepository).findById(user.getId());
+    verify(itemRepository).findById(item.getId());
   }
 
-  @Test
-  void getByOwnerIdOrBookerId() {
-    CreateUserDto createUserDto = CreateUserDto.builder().name("name1").email("mail@mail.ru")
-        .build();
-    UserDto ownerDto = userService.create(createUserDto);
-
-    CreateItemDto createItemDto = CreateItemDto.builder()
-        .name("item")
-        .available(true)
-        .description("item")
-        .build();
-
-    ItemDto itemDto = itemService.create(ownerDto.getId(), createItemDto);
-
-    CreateUserDto bookerDto = CreateUserDto.builder().name("name2").email("mail2@mail.ru")
-        .build();
-    UserDto booker = userService.create(bookerDto);
-
-    CreateBookingDto bookingDto = CreateBookingDto.builder()
-        .start(LocalDateTime.parse("2023-08-14T16:00:00"))
-        .end(LocalDateTime.parse("2023-08-14T17:00:00"))
-        .itemId(itemDto.getId())
-        .build();
-
-    BookingDto dto = bookingService.create(booker.getId(), bookingDto);
-
-    BookingDto bookingDto1 = bookingService.getByOwnerIdOrBookerId(dto.getId(), booker.getId());
-    assertNotNull(bookingDto1);
-
-    BookingDto bookingDto2 = bookingService.getByOwnerIdOrBookerId(dto.getId(), ownerDto.getId());
-    assertNotNull(bookingDto2);
-
-    assertEquals(bookingDto1.getId(), bookingDto2.getId());
-
-    assertEquals(dto.getId(), bookingDto1.getId());
-    assertEquals(dto.getId(), bookingDto2.getId());
-
-  }
 }

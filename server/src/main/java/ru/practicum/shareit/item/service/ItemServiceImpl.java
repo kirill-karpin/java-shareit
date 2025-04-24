@@ -62,11 +62,6 @@ public class ItemServiceImpl implements ItemService {
         .map(ItemMapper::toItemDto).collect(Collectors.toList());
   }
 
-  @Override
-  public ItemDto update(UpdateItemDto updateItemDto) {
-    return ItemMapper.toItemDto(createOrUpdate(ItemMapper.toItem(updateItemDto)));
-  }
-
   public ItemDto updateItemByIdWithOwnerId(Long userId, Long itemId, UpdateItemDto updateItemDto) {
 
     User user = userRepository.findById(userId)

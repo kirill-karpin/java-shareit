@@ -9,6 +9,7 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.User;
@@ -37,7 +38,7 @@ public class BookingServiceImpl implements BookingService {
         .orElseThrow(() -> new NotFoundException("Item not found"));
 
     if (!item.getIsAvailable()) {
-      throw new RuntimeException("Item not available");
+      throw new ValidationException("Item not available");
     }
 
     Booking createdBooking = BookingMapper.toBooking(createBookingDto);

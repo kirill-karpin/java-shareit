@@ -1,4 +1,4 @@
-package ru.practicum.shareit.comment.service;
+package ru.practicum.shareit.item.service;
 
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -15,10 +15,6 @@ import ru.practicum.shareit.booking.service.BookingServiceImpl;
 import ru.practicum.shareit.item.dto.CreateCommentDto;
 import ru.practicum.shareit.item.dto.CreateItemDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.service.CommentService;
-import ru.practicum.shareit.item.service.CommentServiceImpl;
-import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.item.service.ItemServiceImpl;
 import ru.practicum.shareit.user.dto.CreateUserDto;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;

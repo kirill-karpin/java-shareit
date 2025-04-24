@@ -28,8 +28,8 @@ public class Mapper {
   }
 
   public static void merge(ItemRequest itemRequest, UpdateItemRequestDto updateItemRequestDto) {
-    if (updateItemRequestDto.getDescription() != null) {
-      itemRequest.setDescription(updateItemRequestDto.getDescription());
-    }
+    itemRequest.setDescription(
+        (updateItemRequestDto.getDescription() != null ? updateItemRequestDto.getDescription()
+            : itemRequest.getDescription()));
   }
 }

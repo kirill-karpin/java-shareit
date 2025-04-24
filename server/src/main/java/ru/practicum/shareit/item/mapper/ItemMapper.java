@@ -4,7 +4,6 @@ import java.util.LinkedHashSet;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.dto.CreateItemDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.UpdateItemDto;
 
 public class ItemMapper {
 
@@ -15,20 +14,11 @@ public class ItemMapper {
         .available(item.getIsAvailable()).build();
   }
 
-  public static Item toItem(ItemDto itemDto) {
-    return Item.builder().id(itemDto.getId()).name(itemDto.getName())
-        .description(itemDto.getDescription()).isAvailable(itemDto.getAvailable()).build();
-  }
-
   public static Item toItem(CreateItemDto itemDto) {
     return Item.builder().name(itemDto.getName()).description(itemDto.getDescription())
         .comments(new LinkedHashSet<>())
         .isAvailable(itemDto.getAvailable()).build();
   }
 
-  public static Item toItem(UpdateItemDto itemDto) {
-    return Item.builder().id(itemDto.getId()).name(itemDto.getName())
-        .description(itemDto.getDescription()).isAvailable(itemDto.getAvailable()).build();
-  }
 
 }

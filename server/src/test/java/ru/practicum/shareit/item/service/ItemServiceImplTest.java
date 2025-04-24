@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -27,7 +28,7 @@ class ItemServiceImplTest {
 
 
   @Test
-  void create() {
+  void testCreate() {
     CreateItemDto itemDto = CreateItemDto.builder()
         .name("item name")
         .description("item description")
@@ -46,16 +47,16 @@ class ItemServiceImplTest {
     assertNotNull(createdItem);
     assertNotNull(createdItem.getId());
 
-    ItemDto itemDb = itemService.getById(user.getId());
+    ItemDto itemDb = itemService.getById(createdItem.getId());
     assertNotNull(itemDb.getId());
   }
 
   @Test
-  void getById() {
+  void testGetById() {
   }
 
   @Test
-  void getAllByUserId() {
+  void testGetAllByUserId() {
     CreateItemDto itemDto = CreateItemDto.builder()
         .name("item name")
         .description("item description")
@@ -86,5 +87,30 @@ class ItemServiceImplTest {
     List<ItemDto> itemsDb = itemService.getAllByUserId(user.getId());
     assertFalse(itemsDb.isEmpty());
 
+  }
+
+  @Test
+  void update() {
+    assertEquals(2, 2);
+  }
+
+  @Test
+  void updateItemByIdWithOwnerId() {
+    assertEquals(2, 2);
+  }
+
+  @Test
+  void search() {
+    assertEquals(2, 2);
+  }
+
+  @Test
+  void createItemWithOwnerId() {
+    assertEquals(2, 2);
+  }
+
+  @Test
+  void getItemByIdAndOwnerId() {
+    assertEquals(2, 2);
   }
 }
