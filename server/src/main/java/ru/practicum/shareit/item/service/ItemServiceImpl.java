@@ -11,6 +11,8 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.UpdateItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -21,9 +23,14 @@ public class ItemServiceImpl implements ItemService {
 
   private final UserRepository userRepository;
 
-  public ItemServiceImpl(ItemRepository itemRepository, UserRepository userService) {
+  private final ItemRequestRepository itemRequestRepository;
+
+  public ItemServiceImpl(ItemRepository itemRepository, UserRepository userService,
+      ItemRequestRepository itemRequestRepository
+  ) {
     this.itemRepository = itemRepository;
     this.userRepository = userService;
+    this.itemRequestRepository = itemRequestRepository;
   }
 
   @Override
@@ -117,6 +124,12 @@ public class ItemServiceImpl implements ItemService {
     Item item = ItemMapper.toItem(itemDto);
 
     item.setOwner(user);
+
+    if (itemDto.getRequestId() != null) {
+      ItemRequest itemRequest = itemRequestRepository.findById(itemDto.getRequestId())
+          .orElseThrow(() -> new NotFoundException("request not found"));
+      item.setRequest(itemRequest);
+    }
 
     return ItemMapper.toItemDto(createOrUpdate(item));
   }

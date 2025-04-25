@@ -8,7 +8,6 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareit.client.BaseClient;
-import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CreateCommentDto;
 import ru.practicum.shareit.item.dto.CreateItemDto;
 import ru.practicum.shareit.item.dto.UpdateItemDto;
@@ -28,29 +27,29 @@ public class ItemClient extends BaseClient {
     );
   }
 
-  public ResponseEntity<Object> create(Long userId, @Valid CreateItemDto itemDto) {
-    return null;
+  public ResponseEntity<?> create(Long userId, @Valid CreateItemDto itemDto) {
+    return post("", userId, itemDto);
   }
 
-  public ResponseEntity<Object> getItemByIdAndOwnerId(Long itemId, Long userId) {
-    return null;
+  public ResponseEntity<?> getItemByIdAndOwnerId(Long itemId, Long userId) {
+    return get("/" + itemId, userId);
   }
 
-  public ResponseEntity<Object> updateItemByIdWithOwnerId(Long userId, Long itemId,
+  public ResponseEntity<?> updateItemByIdWithOwnerId(Long userId, Long itemId,
       @Valid UpdateItemDto updateItemDto) {
-    return null;
+    return patch("/" + itemId, userId, updateItemDto);
   }
 
-  public CommentDto commentBookingPast(Long userId, Long itemId,
+  public ResponseEntity<?> commentBookingPast(Long userId, Long itemId,
       @Valid CreateCommentDto commentDto) {
-    return null;
+    return post("/" + itemId + "/comment", userId, commentDto);
   }
 
-  public ResponseEntity<Object> search(String searchString) {
-    return null;
+  public ResponseEntity<?> search(String searchString) {
+    return get("/search?text=" + searchString);
   }
 
-  public ResponseEntity<Object> getAllByUserId(Long userId) {
-    return null;
+  public ResponseEntity<?> getAllByUserId(Long userId) {
+    return get("", userId);
   }
 }

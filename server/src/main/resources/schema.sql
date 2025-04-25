@@ -23,8 +23,10 @@ CREATE TABLE IF NOT EXISTS items
     name         VARCHAR(255)                            NOT NULL,
     description  TEXT                                    NOT NULL,
     is_available BOOLEAN,
+    request_id   BIGINT,
     owner_id     BIGINT                                  NOT NULL
-        CONSTRAINT items_users_id_fk REFERENCES users
+        CONSTRAINT items_users_id_fk REFERENCES users,
+    CONSTRAINT items_request_id_fk FOREIGN KEY (request_id) REFERENCES requests (id) ON DELETE CASCADE
 );
 
 

@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user;
 
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.user.dto.CreateUserDto;
 import ru.practicum.shareit.user.dto.UpdateUserDto;
-import ru.practicum.shareit.user.dto.UserDto;
 
 /**
  * TODO Sprint add-controllers.
@@ -27,18 +27,18 @@ public class UserController {
   }
 
   @GetMapping("/{userId}")
-  public UserDto get(@PathVariable Long userId) {
+  public ResponseEntity<?> get(@PathVariable Long userId) {
     return userClient.getById(userId);
   }
 
   @PostMapping
-  public UserDto create(@RequestBody @Valid CreateUserDto user) {
+  public ResponseEntity<?> create(@RequestBody @Valid CreateUserDto user) {
     return userClient.create(user);
   }
 
   @PatchMapping("/{userId}")
-  public UserDto update(@PathVariable Long userId, @RequestBody UpdateUserDto userUpdateDto) {
-
+  public ResponseEntity<?> update(@PathVariable Long userId,
+      @RequestBody UpdateUserDto userUpdateDto) {
     return userClient.update(userId, userUpdateDto);
   }
 

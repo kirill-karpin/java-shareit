@@ -19,7 +19,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 @Getter
@@ -59,5 +62,10 @@ public class Item {
   @OneToMany(mappedBy = "item", fetch = FetchType.EAGER)
   private Set<Comment> comments = new LinkedHashSet<>();
 
+
+  @ManyToOne(fetch = FetchType.EAGER)
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  @JoinColumn(name = "request_id")
+  private ItemRequest request;
 
 }
