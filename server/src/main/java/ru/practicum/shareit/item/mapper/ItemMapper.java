@@ -15,7 +15,8 @@ public class ItemMapper {
   }
 
   public static Item toItem(CreateItemDto itemDto) {
-    return Item.builder().name(itemDto.getName()).description(itemDto.getDescription())
+    return Item.builder()
+        .name(itemDto.getName()).description(itemDto.getDescription())
         .comments(new LinkedHashSet<>())
         .isAvailable(itemDto.getAvailable()).build();
   }

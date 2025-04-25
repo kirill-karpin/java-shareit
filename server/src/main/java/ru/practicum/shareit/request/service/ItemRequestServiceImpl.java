@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.mapper.ItemMapper;
+import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.request.dto.CreateItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -18,11 +21,13 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
   private final ItemRequestRepository itemRequestRepository;
   private final UserRepository userRepository;
+  private final ItemRepository itemRepository;
 
   public ItemRequestServiceImpl(ItemRequestRepository itemRequestRepository,
-      UserRepository userRepository) {
+      UserRepository userRepository, ItemRepository itemRepository) {
     this.itemRequestRepository = itemRequestRepository;
     this.userRepository = userRepository;
+    this.itemRepository = itemRepository;
   }
 
 
@@ -68,10 +73,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
   @Override
   public List<ItemRequestDto> getUserRequests(Long userId) {
-    var requests = itemRequestRepository.findAllByRequestor_Id(userId).stream()
-        .map(Mapper::toItemRequestDto).toList();
 
-    return requests;
+    return itemRequestRepository.findAllByRequestor_Id(userId).stream()
+        .map(Mapper::toItemRequestDto).toList();
   }
 
   @Override
@@ -82,7 +86,14 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
   @Override
   public ItemRequestDto getById(Long requestId) {
-    return Mapper.toItemRequestDto(itemRequestRepository.findById(requestId)
+    var itemRequest = Mapper.toItemRequestDto(itemRequestRepository.findById(requestId)
         .orElseThrow(() -> new NotFoundException("Request with id " + requestId + " not found")));
+
+    List<ItemDto> items = itemRepository.findAllByRequest_Id(requestId).stream()
+        .map(ItemMapper::toItemDto).toList();
+
+    itemRequest.setItems(items);
+
+    return itemRequest;
   }
 }

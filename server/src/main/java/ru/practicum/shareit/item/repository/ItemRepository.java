@@ -14,4 +14,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
       @Size(max = 512) @NotNull String name, Boolean isAvailable);
 
   List<Item> findAllByOwner_Id(Long ownerId);
+
+  List<Item> findAllByRequest_Id(Long requestId);
 }
