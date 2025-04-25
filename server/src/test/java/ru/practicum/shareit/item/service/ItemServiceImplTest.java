@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Import;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.dto.CreateItemDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.UpdateItemDto;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dto.CreateUserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
@@ -31,16 +32,10 @@ class ItemServiceImplTest {
 
   @Test
   void testCreate() {
-    CreateItemDto itemDto = CreateItemDto.builder()
-        .name("item name")
-        .description("item description")
-        .available(true)
-        .build();
+    CreateItemDto itemDto = CreateItemDto.builder().name("item name")
+        .description("item description").available(true).build();
 
-    CreateUserDto userDto = CreateUserDto.builder()
-        .name("user name")
-        .email("mail")
-        .build();
+    CreateUserDto userDto = CreateUserDto.builder().name("user name").email("mail").build();
 
     User user = UserMapper.toUser(userService.create(userDto));
 
@@ -51,6 +46,10 @@ class ItemServiceImplTest {
 
     ItemDto itemDb = itemService.getById(createdItem.getId());
     assertNotNull(itemDb.getId());
+
+
+    assertThrows(NotFoundException.class,
+        () -> itemService.createItemWithOwnerId(itemDto, 0L));
   }
 
   @Test
@@ -62,22 +61,13 @@ class ItemServiceImplTest {
 
   @Test
   void testGetAllByUserId() {
-    CreateItemDto itemDto = CreateItemDto.builder()
-        .name("item name")
-        .description("item description")
-        .available(true)
-        .build();
+    CreateItemDto itemDto = CreateItemDto.builder().name("item name")
+        .description("item description").available(true).build();
 
-    CreateItemDto itemDto2 = CreateItemDto.builder()
-        .name("item name")
-        .description("item description")
-        .available(true)
-        .build();
+    CreateItemDto itemDto2 = CreateItemDto.builder().name("item name")
+        .description("item description").available(true).build();
 
-    CreateUserDto userDto = CreateUserDto.builder()
-        .name("user name")
-        .email("mail")
-        .build();
+    CreateUserDto userDto = CreateUserDto.builder().name("user name").email("mail").build();
 
     User user = UserMapper.toUser(userService.create(userDto));
 
@@ -94,28 +84,100 @@ class ItemServiceImplTest {
 
   }
 
-  @Test
-  void update() {
-    assertEquals(2, 2);
-  }
 
   @Test
   void updateItemByIdWithOwnerId() {
-    assertEquals(2, 2);
+    CreateItemDto itemDto = CreateItemDto.builder().name("item name")
+        .description("item description").available(true).build();
+
+    CreateUserDto ownerDto = CreateUserDto.builder().name("Owner").email("mail").build();
+    User owner = UserMapper.toUser(userService.create(ownerDto));
+
+    CreateUserDto userDto = CreateUserDto.builder().name("User").email("mail2").build();
+    User user = UserMapper.toUser(userService.create(userDto));
+
+    ItemDto createdItem = itemService.createItemWithOwnerId(itemDto, owner.getId());
+
+    assertNotNull(createdItem);
+    assertNotNull(createdItem.getId());
+    UpdateItemDto updateItemDto = UpdateItemDto.builder().name("update name").description("update").build();
+
+    assertThrows(NotFoundException.class,
+        () -> itemService.updateItemByIdWithOwnerId(999L, createdItem.getId(), updateItemDto));
+
+    assertThrows(NotFoundException.class,
+        () -> itemService.updateItemByIdWithOwnerId(owner.getId(), 999L, updateItemDto));
+
+    assertThrows(NotFoundException.class,
+        () -> itemService.updateItemByIdWithOwnerId(user.getId(), createdItem.getId(),
+            updateItemDto));
+
+    itemService.updateItemByIdWithOwnerId(
+        owner.getId(),
+        createdItem.getId(),
+        UpdateItemDto.builder().available(true)
+            .build()
+    );
+
+    itemService.updateItemByIdWithOwnerId(
+        owner.getId(),
+        createdItem.getId(),
+        UpdateItemDto.builder().description("update")
+            .build()
+    );
+
+    itemService.updateItemByIdWithOwnerId(
+        owner.getId(),
+        createdItem.getId(),
+        UpdateItemDto.builder().name("updateName")
+            .build()
+    );
+
+
+
+
   }
 
   @Test
   void search() {
-    assertEquals(2, 2);
-  }
+    var result1 = itemService.search("");
 
-  @Test
-  void createItemWithOwnerId() {
-    assertEquals(2, 2);
+    assertEquals(0, result1.size());
+
+    CreateItemDto itemDto = CreateItemDto.builder().name("item name")
+        .description("item description").available(true).build();
+
+    CreateUserDto userDto = CreateUserDto.builder().name("user name").email("mail").build();
+
+    User user = UserMapper.toUser(userService.create(userDto));
+
+    itemService.createItemWithOwnerId(itemDto, user.getId());
+
+    var result2 = itemService.search("test");
+
+    assertEquals(0, result2.size());
   }
 
   @Test
   void getItemByIdAndOwnerId() {
-    assertEquals(2, 2);
+
+    assertThrows(NotFoundException.class,
+        () -> itemService.getItemByIdAndOwnerId(0L, 0L));
+
+    CreateItemDto createItemDto = CreateItemDto.builder().name("item name")
+        .description("item description").available(true).build();
+
+    CreateUserDto ownerDto = CreateUserDto.builder().name("Owner").email("mail").build();
+    var owner = UserMapper.toUser(userService.create(ownerDto));
+
+    CreateUserDto userDto = CreateUserDto.builder().name("User").email("mail2").build();
+    UserMapper.toUser(userService.create(userDto));
+
+    itemService.createItemWithOwnerId(createItemDto, owner.getId());
+
+    assertThrows(NotFoundException.class,
+        () -> itemService.getItemByIdAndOwnerId(0L, owner.getId()));
+
+
   }
 }

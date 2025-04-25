@@ -63,6 +63,10 @@ class BookingServiceImplTest {
     BookingDto approvedDto = bookingService.getById(dto.getId());
     assertEquals(BookingStatus.APPROVED, approvedDto.getStatus());
 
+    bookingService.approve(userDto.getId(), dto.getId(), false);
+    BookingDto approvedfalseDto = bookingService.getById(dto.getId());
+
+    assertEquals(BookingStatus.REJECTED, approvedfalseDto.getStatus());
   }
 
   @Test
@@ -126,5 +130,19 @@ class BookingServiceImplTest {
     assertEquals(dto.getId(), bookingDto1.getId());
     assertEquals(dto.getId(), bookingDto2.getId());
 
+  }
+
+
+  @Test
+  void getBookingByBookerId() {
+    assertThrows(NotFoundException.class,
+        () -> bookingService.getBookingByBookerId(0L));
+  }
+
+  @Test
+  void getBookingByOwnerId() {
+
+    assertThrows(NotFoundException.class,
+        () -> bookingService.getBookingByOwnerId(0L));
   }
 }
