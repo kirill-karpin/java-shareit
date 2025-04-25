@@ -3,6 +3,7 @@ package ru.practicum.shareit.request.mapper;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.request.dto.CreateItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -24,6 +25,7 @@ public class Mapper {
         .description(itemRequest.getDescription())
         .requestor(itemRequest.getRequestor())
         .created(LocalDateTime.ofInstant(itemRequest.getCreated(), ZoneOffset.ofHours(0)))
+        .items(new ArrayList<>())
         .build();
   }
 

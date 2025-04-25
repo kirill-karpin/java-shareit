@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -28,21 +29,21 @@ public class ItemRequestController {
     this.client = client;
   }
 
-  @PostMapping("/")
+  @PostMapping
   public ResponseEntity<?> createRequest(@RequestHeader(USER_ID_HEADER) Long userId,
       @RequestBody CreateItemRequestDto createItemRequestDto) {
     log.info("Запрос на создание запроса аренды вещи");
     return client.createRequest(userId, createItemRequestDto);
   }
 
-  @GetMapping("/")
+  @GetMapping
   public ResponseEntity<?> getUserItemRequests(@RequestHeader(USER_ID_HEADER) Long userId) {
     log.info("Получение запросов аренды вещей пользователя");
     return client.getUserItemRequests(userId);
   }
 
   @GetMapping("/{requestId}")
-  public ResponseEntity<?> getById(@RequestHeader(USER_ID_HEADER) Long userId, Long requestId) {
+  public ResponseEntity<?> getById(@RequestHeader(USER_ID_HEADER) Long userId, @PathVariable Long requestId) {
     log.info("Получение запроса аренды вещей пользователя по id");
     return client.getById(userId, requestId);
   }
