@@ -124,9 +124,6 @@ public class ItemServiceImpl implements ItemService {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new NotFoundException("user not found"));
 
-    if (user == null) {
-      throw new NotFoundException("user not found");
-    }
     Item item = ItemMapper.toItem(itemDto);
 
     item.setOwner(user);

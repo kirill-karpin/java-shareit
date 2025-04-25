@@ -47,7 +47,6 @@ class ItemServiceImplTest {
     ItemDto itemDb = itemService.getById(createdItem.getId());
     assertNotNull(itemDb.getId());
 
-
     assertThrows(NotFoundException.class,
         () -> itemService.createItemWithOwnerId(itemDto, 0L));
   }
@@ -82,6 +81,20 @@ class ItemServiceImplTest {
     List<ItemDto> itemsDb = itemService.getAllByUserId(user.getId());
     assertFalse(itemsDb.isEmpty());
 
+    assertThrows(NotFoundException.class, () -> itemService.createItemWithOwnerId(
+        CreateItemDto.builder()
+            .requestId(0L)
+            .build(),
+        user.getId()
+    ));
+
+    assertThrows(NotFoundException.class, () -> itemService.createItemWithOwnerId(
+        CreateItemDto.builder()
+            .requestId(0L)
+            .build(),
+        0L
+    ));
+
   }
 
 
@@ -100,7 +113,8 @@ class ItemServiceImplTest {
 
     assertNotNull(createdItem);
     assertNotNull(createdItem.getId());
-    UpdateItemDto updateItemDto = UpdateItemDto.builder().name("update name").description("update").build();
+    UpdateItemDto updateItemDto = UpdateItemDto.builder().name("update name").description("update")
+        .build();
 
     assertThrows(NotFoundException.class,
         () -> itemService.updateItemByIdWithOwnerId(999L, createdItem.getId(), updateItemDto));
@@ -129,11 +143,9 @@ class ItemServiceImplTest {
     itemService.updateItemByIdWithOwnerId(
         owner.getId(),
         createdItem.getId(),
-        UpdateItemDto.builder().name("updateName")
+        UpdateItemDto.builder().name("new name")
             .build()
     );
-
-
 
 
   }
