@@ -18,9 +18,9 @@ import ru.practicum.shareit.user.service.UserServiceImpl;
 class ItemRequestServiceTest {
 
   @Autowired
-  ItemRequestService itemRequestService;
+  private ItemRequestService itemRequestService;
   @Autowired
-  UserService userService;
+  private UserService userService;
 
   User createUser01() {
     User user1 = User.builder()
@@ -84,7 +84,7 @@ class ItemRequestServiceTest {
 
     var dbResult = itemRequestService.getUserRequests(user1.getId());
 
-    assertEquals(dbResult.size(), 2);
+    assertEquals(2, dbResult.size());
   }
 
 

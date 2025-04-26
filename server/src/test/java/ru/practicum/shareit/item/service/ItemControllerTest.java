@@ -37,13 +37,13 @@ import ru.practicum.shareit.item.dto.UpdateItemDto;
 class ItemControllerTest {
 
   @Autowired
-  ObjectMapper mapper;
+  private ObjectMapper mapper;
 
   @MockBean
-  ItemService itemService;
+  private ItemService itemService;
 
   @MockBean
-  CommentService commentService;
+  private CommentService commentService;
 
   @Autowired
   private MockMvc mvc;

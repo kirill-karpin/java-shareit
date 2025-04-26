@@ -1,6 +1,8 @@
 package ru.practicum.shareit;
 
-public class Config {
+public final class Config {
+
+  private Config() {}
 
   public static final String USER_ID_HEADER = "X-Sharer-User-Id";
 }

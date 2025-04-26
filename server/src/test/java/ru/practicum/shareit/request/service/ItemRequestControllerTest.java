@@ -32,10 +32,10 @@ import ru.practicum.shareit.user.User;
 public class ItemRequestControllerTest {
 
   @Autowired
-  ObjectMapper mapper;
+  private ObjectMapper mapper;
 
   @MockBean
-  ItemRequestService requestService;
+  private ItemRequestService requestService;
 
   @Autowired
   private MockMvc mvc;
